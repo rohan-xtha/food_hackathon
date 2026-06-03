@@ -1,0 +1,6 @@
+{
+  "name": "KrishiMarket",
+  "description": "Nepalese Farm-to-Table Professional marketplace system connecting traditional farmers and modern buyers with quality control, analytics, and logistics tools.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
