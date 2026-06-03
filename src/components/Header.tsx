@@ -78,49 +78,51 @@ export default function Header({
         </div>
 
         {/* Center Navigation Tabs (Desktop only) */}
-        <div className="hidden md:flex items-center gap-8 font-sans">
-          <button 
-            onClick={() => onTabChange('market')}
-            className={`py-5 text-sm font-semibold tracking-wide border-b-2 transition-all ${
-              currentTab === 'market' 
-                ? 'text-[#154212] border-[#154212]' 
-                : 'text-slate-500 border-transparent hover:text-[#154212]'
-            }`}
-            id="nav-tab-market"
-          >
-            {isNepali ? 'बजार (Market)' : 'Market'}
-          </button>
-          
-          {isAuthenticated && (currentUser?.role === 'farmer' || currentUser?.role === 'admin') && (
+        {(currentTab !== 'login' && currentTab !== 'register') && (
+          <div className="hidden md:flex items-center gap-8 font-sans">
             <button 
-              onClick={() => {
-                onTabChange('dashboard');
-              }}
+              onClick={() => onTabChange('market')}
               className={`py-5 text-sm font-semibold tracking-wide border-b-2 transition-all ${
-                currentTab === 'dashboard' 
+                currentTab === 'market' 
                   ? 'text-[#154212] border-[#154212]' 
                   : 'text-slate-500 border-transparent hover:text-[#154212]'
               }`}
-              id="nav-tab-dashboard"
+              id="nav-tab-market"
             >
-              {isNepali ? 'ड्यासबोर्ड' : 'Dashboard'}
+              {isNepali ? 'बजार (Market)' : 'Market'}
             </button>
-          )}
-          
-          {isAuthenticated && (
-            <button 
-              onClick={() => onTabChange('logistics')}
-              className={`py-5 text-sm font-semibold tracking-wide border-b-2 transition-all ${
-                currentTab === 'logistics' 
-                  ? 'text-[#154212] border-[#154212]' 
-                  : 'text-slate-500 border-transparent hover:text-[#154212]'
-              }`}
-              id="nav-tab-logistics"
-            >
-              {isNepali ? 'ढुवानी (Logistics)' : 'Logistics'}
-            </button>
-          )}
-        </div>
+            
+            {isAuthenticated && (currentUser?.role === 'farmer' || currentUser?.role === 'admin') && (
+              <button 
+                onClick={() => {
+                  onTabChange('dashboard');
+                }}
+                className={`py-5 text-sm font-semibold tracking-wide border-b-2 transition-all ${
+                  currentTab === 'dashboard' 
+                    ? 'text-[#154212] border-[#154212]' 
+                    : 'text-slate-500 border-transparent hover:text-[#154212]'
+                }`}
+                id="nav-tab-dashboard"
+              >
+                {isNepali ? 'ड्यासबोर्ड' : 'Dashboard'}
+              </button>
+            )}
+            
+            {isAuthenticated && (
+              <button 
+                onClick={() => onTabChange('logistics')}
+                className={`py-5 text-sm font-semibold tracking-wide border-b-2 transition-all ${
+                  currentTab === 'logistics' 
+                    ? 'text-[#154212] border-[#154212]' 
+                    : 'text-slate-500 border-transparent hover:text-[#154212]'
+                }`}
+                id="nav-tab-logistics"
+              >
+                {isNepali ? 'ढुवानी (Logistics)' : 'Logistics'}
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Right Side Actions */}
         <div className="flex items-center gap-4">
@@ -368,12 +370,14 @@ export default function Header({
               )}
             </div>
           ) : (
-            <button 
-              onClick={() => onTabChange('login')}
-              className="px-4 py-2 bg-[#154212] text-white text-sm font-semibold rounded-full hover:bg-[#2d5a27] transition-colors"
-            >
-              {isNepali ? 'लग - इन' : 'Login'}
-            </button>
+            (currentTab !== 'login' && currentTab !== 'register') && (
+              <button
+                onClick={() => onTabChange('login')}
+                className="px-4 py-2 bg-[#154212] text-white text-sm font-semibold rounded-full hover:bg-[#2d5a27] transition-colors"
+              >
+                {isNepali ? 'लग - इन' : 'Login'}
+              </button>
+            )
           )}
         </div>
       </header>
