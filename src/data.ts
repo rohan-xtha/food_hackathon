@@ -1,4 +1,37 @@
-import { Crop, PreOrderRequest, QualityBatch } from './types';
+import { Crop, PreOrderRequest, QualityBatch, User } from './types';
+
+export const INITIAL_USERS: User[] = [
+  {
+    id: 'user-1',
+    username: 'adminuser',
+    email: 'admin@example.com',
+    role: 'admin',
+  },
+  {
+    id: 'user-2',
+    username: 'farmerjohn',
+    email: 'john@example.com',
+    role: 'farmer',
+  },
+  {
+    id: 'user-3',
+    username: 'customerjane',
+    email: 'jane@example.com',
+    role: 'customer',
+  },
+  {
+    id: 'user-4',
+    username: 'farmerram',
+    email: 'ram@example.com',
+    role: 'farmer',
+  },
+  {
+    id: 'user-5',
+    username: 'customeralice',
+    email: 'alice@example.com',
+    role: 'customer',
+  },
+];
 
 export const INITIAL_CROPS: Crop[] = [
   {

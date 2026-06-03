@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { INITIAL_CROPS, INITIAL_PRE_ORDERS, INITIAL_QUALITY_BATCHES } from './data';
+import { INITIAL_CROPS, INITIAL_PRE_ORDERS, INITIAL_QUALITY_BATCHES, INITIAL_USERS } from './data';
 import { Crop, PreOrderRequest, QualityBatch, CartItem, ViewTab, FarmerSidebarTab, User as UserType, UserRole } from './types';
 import Header from './components/Header';
 import Marketplace from './components/Marketplace';
@@ -10,7 +10,7 @@ import Logistics from './components/Logistics';
 import LoginPage from './components/LoginPage'; // New import
 import RegisterPage from './components/RegisterPage'; // New import
 import CustomerDashboard from './components/CustomerDashboard'; // New import
-// import AdminDashboard from './components/AdminDashboard'; // New import
+import AdminDashboard from './components/AdminDashboard'; // New import
 import { Store, ShoppingBag, Truck, ClipboardCheck, CheckCircle, User } from 'lucide-react';
 
 export default function App() {
@@ -43,6 +43,7 @@ export default function App() {
   const [crops, setCrops] = useState<Crop[]>(INITIAL_CROPS);
   const [preOrders, setPreOrders] = useState<PreOrderRequest[]>(INITIAL_PRE_ORDERS);
   const [qualityBatches, setQualityBatches] = useState<QualityBatch[]>(INITIAL_QUALITY_BATCHES);
+  const [users, setUsers] = useState<UserType[]>(INITIAL_USERS);
   
   // Shopping Cart State
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -245,7 +246,18 @@ export default function App() {
             )}
 
             {/* Dashboard Route Panel */}
-            {currentTab === 'dashboard' && (currentUser?.role === 'farmer' || currentUser?.role === 'admin') && (
+            {currentTab === 'dashboard' && currentUser?.role === 'admin' && (
+              <AdminDashboard 
+                isNepali={isNepali}
+                crops={crops}
+                onUpdateCropPrice={handleUpdateCropPrice}
+                users={users}
+                preOrders={preOrders}
+                qualityBatches={qualityBatches}
+              />
+            )}
+
+            {currentTab === 'dashboard' && currentUser?.role === 'farmer' && (
               <div className="flex flex-col lg:flex-row gap-6">
                 
                 {/* Embedded sidebar sub-menu (Mobile Only) */}
