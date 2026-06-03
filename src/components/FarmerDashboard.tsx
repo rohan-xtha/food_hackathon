@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, Check, PlusCircle, ShieldCheck, DollarSign, Calendar, TrendingUp, Sparkles, AlertCircle, Edit3, Save, CheckCircle
 } from 'lucide-react';
-import { Crop, PreOrderRequest, FarmerSidebarTab } from '../types';
+import { Crop, PreOrderRequest, User, FarmerSidebarTab } from '../types';
 
 interface FarmerDashboardProps {
   crops: Crop[];
@@ -14,7 +14,7 @@ interface FarmerDashboardProps {
   onDeclinePreOrder: (preOrderId: string) => void;
   isNepali: boolean;
   onNavigateToQC: () => void;
-  currentUser: UserType | null;
+  currentUser: User | null;
 }
 
 export default function FarmerDashboard({
@@ -29,7 +29,7 @@ export default function FarmerDashboard({
   onNavigateToQC,
   currentUser
 }: FarmerDashboardProps) {
-  const [activeSidebarTab, setActiveSidebarTab] = useState<FarmerSidebarTab>('dashboard');
+  const [activeSidebarTab, setActiveSidebarTab] = useState<FarmerSidebarTab>('inventory');
   
   // Crop listing form modal state
   const [showAddModal, setShowAddModal] = useState(false);
@@ -124,17 +124,7 @@ export default function FarmerDashboard({
         </div>
 
         <nav className="flex-grow space-y-1 px-2 font-sans">
-          <button 
-            onClick={() => setActiveSidebarTab('dashboard')}
-            className={`w-full py-2.5 px-4 rounded-xl text-xs font-bold tracking-wide flex items-center gap-3 transition-colors ${
-              activeSidebarTab === 'dashboard' 
-                ? 'bg-[#2d5a27]/10 text-[#154212]' 
-                : 'text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            <span className="bullet-point w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-            <span>Dashboard Home</span>
-          </button>
+
 
           <button 
             onClick={() => setActiveSidebarTab('inventory')}
@@ -197,229 +187,7 @@ export default function FarmerDashboard({
 
       {/* Main Interactive Work Area */}
       <div className="flex-1 lg:ml-64 px-4 py-6 md:px-8 max-w-7xl">
-        {activeSidebarTab === 'dashboard' && (
-          <div className="space-y-8">
-            
-            {/* Quick Actions / Hero Banner */}
-            <div className="flex flex-col md:flex-row gap-6">
-              
-              {/* Bali Management main Card */}
-              <div className="flex-1 bg-[#154212] text-white p-8 rounded-3xl relative overflow-hidden shadow-xl min-h-60 flex flex-col justify-between">
-                <div className="relative z-10 max-w-md">
-                  <h1 className="text-3xl font-bold font-display tracking-tight text-white mb-2">बाली व्यवस्थापन</h1>
-                  <p className="text-[#a1d494] font-semibold text-sm max-w-sm mb-6 leading-relaxed">
-                    तपाईंको कृषि उत्पादन बजारमा सूचीकृत गर्नुहोस् र बढी नाफा कमाउनुहोस्।
-                  </p>
-                  {currentUser?.role === 'admin' && (
-                    <button 
-                      onClick={() => setShowAddModal(true)}
-                      className="h-14 px-8 bg-[#fd8f42] hover:bg-orange-400 text-[#321300] focus:ring-4 focus:ring-orange-300 font-extrabold rounded-xl transition-all shadow-md inline-flex items-center gap-2.5 active:scale-95 text-xs uppercase tracking-wider"
-                    >
-                      <PlusCircle className="w-5 h-5 text-[#321300]" />
-                      नयाँ बाली थप्नुहोस् (List New Crop)
-                    </button>
-                  )}
-                </div>
-                {/* Decorative Icon */}
-                <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-1/4 translate-y-1/4">
-                  <Sparkles className="w-64 h-64" />
-                </div>
-              </div>
 
-              {/* Profit metrics Box */}
-              <div className="w-full md:w-80 bg-[#eae8e7] border border-[#154212]/15 text-[#1b1c1c] p-8 rounded-3xl shadow-lg flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 block mb-1">
-                    My Profits (कुल नाफा)
-                  </span>
-                  <div className="text-4xl font-extrabold text-[#154212] font-mono mt-1">रू ७८,५००</div>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold mt-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-700">+१२% {isNepali ? 'यो महिना' : 'this month'}</span>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => setActiveSidebarTab('profits')}
-                  className="mt-6 font-sans w-full p-3 bg-white hover:bg-emerald-50 rounded-xl font-bold text-xs text-[#154212] tracking-wider border border-slate-300 text-center uppercase shadow-xs transition-colors flex items-center justify-between"
-                >
-                  <span>View Ledger Statement</span>
-                  <PlusCircle className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Quick overview layout split */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
-              {/* Left Column: Stocks Available */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-[#154212] border-b-2 border-[#154212] pb-1">
-                    Available for Purchase
-                  </h3>
-                  <button 
-                    onClick={() => setActiveSidebarTab('inventory')}
-                    className="text-xs font-extrabold text-[#154212] hover:underline uppercase tracking-wide"
-                  >
-                    View All Inventory
-                  </button>
-                </div>
-
-                {farmerCrops.length === 0 ? (
-                  <div className="bg-white border rounded-2xl py-12 text-center p-6">
-                    <AlertCircle className="w-12 h-12 text-slate-300 mx-auto stroke-[1.5]" />
-                    <p className="text-slate-500 text-sm font-semibold mt-3">You haven’t listed any stock yet.</p>
-                    <button 
-                      onClick={() => setShowAddModal(true)} 
-                      className="text-[#154212] text-xs font-bold hover:underline mt-1"
-                    >
-                      List a crop now
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {farmerCrops.map((crop) => (
-                      <div key={crop.id} className="bg-white p-4 rounded-2xl border border-[#154212]/10 shadow-xs hover:shadow-md transition-shadow">
-                        <div className="h-44 rounded-xl overflow-hidden relative mb-4 bg-slate-100">
-                          <img 
-                            src={crop.image} 
-                            alt={crop.name} 
-                            className="w-full h-full object-cover"
-                            referrerPolicy="no-referrer"
-                          />
-                          <span className="absolute top-2 left-2 bg-[#bcf0ae] text-[#002201] text-[10px] font-bold px-2.5 py-1 rounded">
-                            {crop.stockKg > 0 ? 'In Stock' : 'Out of Stock'}
-                          </span>
-                        </div>
-
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-bold text-[#154212] text-sm md:text-base">
-                              {isNepali ? crop.nepaliName : crop.name}
-                            </h4>
-                            <p className="text-slate-400 text-xs font-medium mt-0.5">
-                              Quantity: <span className="font-bold text-slate-600">{crop.stockKg} Kg</span>
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-slate-800 font-extrabold text-base font-mono">रू {crop.pricePerKgCurrent}/Kg</p>
-                            {crop.pricePerKgOriginal > crop.pricePerKgCurrent && (
-                              <p className="text-[10px] text-slate-400 line-through">रू {crop.pricePerKgOriginal}</p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="mt-4 flex gap-2">
-                          {currentUser?.role === 'admin' && (
-                            <button 
-                              onClick={() => startInlineEdit(crop)}
-                              className="flex-1 py-2.5 bg-[#f6f3f2] hover:bg-[#eae8e7] text-slate-700 font-sans font-bold text-xs rounded-xl transition-all"
-                            >
-                              Edit Inventory
-                            </button>
-                          )}
-                          {currentUser?.role === 'admin' && (
-                            <button 
-                              onClick={() => onDeleteCrop(crop.id)}
-                              className="py-2.5 px-3 bg-red-50 hover:bg-red-100 text-[#ba1a1a] rounded-xl transition-all"
-                              title="De-list crop"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Right Side: Pre-orders column */}
-              <div className="space-y-6">
-                <div className="bg-white p-5 rounded-2xl border border-slate-200/50 shadow-sm">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-[#154212] text-sm">
-                      Pre-order Bids
-                    </h3>
-                    <span className="bg-[#ffdf98] text-[#251a00] text-[9.5px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                      New: {preOrders.filter(p => p.status === 'PENDING').length}
-                    </span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {preOrders.slice(0, 2).map((req) => (
-                      <div key={req.id} className="p-4 rounded-xl border border-slate-100 bg-[#fbf9f8]">
-                        <div className="flex justify-between text-xs font-bold mb-1">
-                          <span className="text-[#154212]">{isNepali ? req.cropNepaliName : req.cropName}</span>
-                          <span className="text-slate-400 font-normal">{req.deliveryDate}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2.5 my-3">
-                          <div className="w-7 h-7 rounded-full bg-slate-300 overflow-hidden">
-                            <img 
-                              src={req.buyerAvatar} 
-                              alt="buyer" 
-                              className="w-full h-full object-cover"
-                              referrerPolicy="no-referrer"
-                            />
-                          </div>
-                          <span className="text-xs text-slate-500 font-semibold">{req.buyerName}</span>
-                        </div>
-
-                        <div className="flex justify-between bg-white px-3 py-2 rounded-lg border border-slate-100 text-xs font-semibold mb-3">
-                          <span className="text-slate-500">Qty: {req.quantityKg} Kg</span>
-                          <span className="text-[#154212] font-bold">रू {req.pricePerKg}/Kg</span>
-                        </div>
-
-                        {req.status === 'PENDING' ? (
-                          <div className="grid grid-cols-2 gap-2">
-                            <button 
-                              onClick={() => onDeclinePreOrder(req.id)}
-                              className="py-1.5 bg-red-50 hover:bg-red-100 text-[#ba1a1a] text-[11px] font-bold rounded-lg transition-colors"
-                            >
-                              Decline
-                            </button>
-                            <button 
-                              onClick={() => onAcceptPreOrder(req.id)}
-                              className="py-1.5 bg-[#154212] hover:bg-[#2d5a27] text-white text-[11px] font-bold rounded-lg transition-colors shadow-xs"
-                            >
-                              Accept Bids
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="text-center py-1 text-xs font-bold text-slate-400 uppercase">
-                            Status: <span className={req.status === 'ACCEPTED' ? 'text-emerald-600' : 'text-[#ba1a1a]'}>{req.status}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
-                  <button 
-                    onClick={() => setActiveSidebarTab('pre-orders')}
-                    className="w-full py-3.5 border border-dashed border-[#154212]/30 hover:bg-emerald-50 text-[#154212] text-xs font-bold rounded-xl transition-all mt-4"
-                  >
-                    View All Bids ({preOrders.length})
-                  </button>
-                </div>
-
-                {/* Expert Suggestions */}
-                <div onClick={handleApplyExpertTip} className="bg-[#654c00] text-[#ffdf98] p-5 rounded-3xl shadow-md cursor-pointer hover:scale-[1.01] hover:shadow-lg transition-all border border-[#f5bf1f]/10">
-                  <div className="flex items-center gap-2 mb-2 text-white">
-                    <Sparkles className="w-5 h-5 text-[#f5bf1f]" />
-                    <h4 className="font-bold text-sm">Expert Tip Suggestions</h4>
-                  </div>
-                  <p className="text-xs text-white/90 leading-normal">
-                    Demand is expected to rise by 25% for <b>Organic Cauliflower</b> next month in Kavre. Tap directly to listing pre-fill!
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        )}
 
         {/* Tab 2: Full Inventory Section */}
         {activeSidebarTab === 'inventory' && (

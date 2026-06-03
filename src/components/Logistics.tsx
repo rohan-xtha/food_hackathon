@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+ import React, { useState } from 'react';
 import { 
   Truck, MapPin, Calendar, Clock, Navigation, Thermometer, ShieldAlert, CheckCircle, Eye, Search, ShieldCheck
 } from 'lucide-react';
@@ -82,7 +82,7 @@ export default function Logistics({ isNepali }: LogisticsProps) {
       {/* Header */}
       <header>
         <h1 className="text-3xl font-bold font-display text-[#154212] tracking-tight">
-          KrishiMarket Logistics Dispatch Center
+          FarmMitra Logistics Dispatch Center
         </h1>
         <p className="text-slate-500 text-sm mt-2">
           Verify cold-chain climate telemetry and match driver dispatch manifests on Nepalese transit highways.

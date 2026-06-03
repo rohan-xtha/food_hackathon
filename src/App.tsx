@@ -14,7 +14,7 @@ import CustomerDashboard from './components/CustomerDashboard'; // New import
 import { Store, ShoppingBag, Truck, ClipboardCheck, CheckCircle, User } from 'lucide-react';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<ViewTab>('market');
+  const [currentTab, setCurrentTab] = useState<ViewTab>('login');
   const [farmerActiveSubTab, setFarmerActiveSubTab] = useState<FarmerSidebarTab>('dashboard');
   const [isNepali, setIsNepali] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +30,7 @@ export default function App() {
   const handleLogin = (user: UserType) => {
     setIsAuthenticated(true);
     setCurrentUser(user);
-    setCurrentTab('market'); // Redirect to market after login
+    setCurrentTab('dashboard'); // Redirect to dashboard after login
   };
 
   const handleLogout = () => {
@@ -192,22 +192,24 @@ export default function App() {
   return (
     <div className="bg-[#fbf9f8] min-h-screen text-[#1b1c1c] font-sans antialiased">
       {/* Dynamic Header Component */}
-      <Header 
-        currentTab={currentTab}
-        onTabChange={setCurrentTab}
-        isNepali={isNepali}
-        onToggleLanguage={toggleLanguage}
-        cart={cart}
-        onRemoveFromCart={handleRemoveFromCart}
-        onUpdateCartQty={handleUpdateCartQty}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onCheckout={handleCheckout}
-        isAuthenticated={isAuthenticated}
-        currentUser={currentUser}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-      />
+      {(currentTab !== 'login' && currentTab !== 'register') && (
+        <Header 
+          currentTab={currentTab}
+          onTabChange={setCurrentTab}
+          isNepali={isNepali}
+          onToggleLanguage={toggleLanguage}
+          cart={cart}
+          onRemoveFromCart={handleRemoveFromCart}
+          onUpdateCartQty={handleUpdateCartQty}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onCheckout={handleCheckout}
+          isAuthenticated={isAuthenticated}
+          currentUser={currentUser}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+        />
+      )}
 
       {/* Main Container Workspace */}
       <main className="pt-[80px] pb-[92.5px] px-4 md:px-6 max-w-7xl mx-auto w-full">
@@ -235,6 +237,9 @@ export default function App() {
                   onSelectCrop={setSelectedCrop}
                   onAddToCart={handleAddToCart}
                   searchQuery={searchQuery}
+                  isAuthenticated={isAuthenticated}
+                  currentUser={currentUser}
+                  onUpdateCropPrice={handleUpdateCropPrice}
                 />
               )
             )}
@@ -321,10 +326,13 @@ export default function App() {
             )}
 
             {currentTab === 'dashboard' && currentUser?.role === 'customer' && (
-              <CustomerDashboard 
+              <CustomerDashboard
                 isNepali={isNepali}
                 crops={crops}
                 onSelectCrop={handleSelectCropAndTab}
+                isAuthenticated={isAuthenticated}
+                currentUser={currentUser}
+                onUpdateCropPrice={handleUpdateCropPrice}
               />
             )}
 
@@ -395,15 +403,17 @@ export default function App() {
             </button>
           )}
 
-          <button 
-            onClick={() => setCurrentTab('logistics')}
-            className={`flex flex-col items-center justify-center p-2.5 transition-all w-16 ${
-              currentTab === 'logistics' ? 'text-[#154212] font-bold' : 'text-slate-400'
-            }`}
-          >
-            <Truck className="w-5 h-5" />
-            <span className="text-[10px] mt-1 font-sans">Logistics</span>
-          </button>
+          {currentUser?.role !== 'customer' && (
+            <button 
+              onClick={() => setCurrentTab('logistics')}
+              className={`flex flex-col items-center justify-center p-2.5 transition-all w-16 ${
+                currentTab === 'logistics' ? 'text-[#154212] font-bold' : 'text-slate-400'
+              }`}
+            >
+              <Truck className="w-5 h-5" />
+              <span className="text-[10px] mt-1 font-sans">Logistics</span>
+            </button>
+          )}
 
           <button 
             onClick={handleLogout}

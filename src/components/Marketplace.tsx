@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Star, ShoppingCart, Calendar, CalendarRange, HelpCircle, Heart, CheckCircle2 } from 'lucide-react';
-import { Crop, CartItem } from '../types';
+import { Star, ShoppingCart, Calendar, CalendarRange, HelpCircle, Heart, CheckCircle2, Edit, X } from 'lucide-react';
+import { Crop, CartItem, User as UserType } from '../types';
 
 interface MarketplaceProps {
   crops: Crop[];
@@ -8,6 +8,9 @@ interface MarketplaceProps {
   onSelectCrop: (crop: Crop) => void;
   onAddToCart: (crop: Crop, isBulk: boolean) => void;
   searchQuery: string;
+  isAuthenticated: boolean;
+  currentUser: UserType | null;
+  onUpdateCropPrice: (cropId: string, newPrice: number) => void;
 }
 
 export default function Marketplace({
@@ -16,11 +19,16 @@ export default function Marketplace({
   onSelectCrop,
   onAddToCart,
   searchQuery,
+  isAuthenticated,
+  currentUser,
+  onUpdateCropPrice,
 }: MarketplaceProps) {
   const [selectedCategory, setSelectedCategory] = useState<'All' | 'Organic' | 'Vegetables' | 'Fruits' | 'Grains'>('All');
   const [deliveryDate, setDeliveryDate] = useState('2026-10-27');
   const [supportOpen, setSupportOpen] = useState(false);
   const [addedAnimationId, setAddedAnimationId] = useState<string | null>(null);
+  const [editingCropId, setEditingCropId] = useState<string | null>(null);
+  const [newPrice, setNewPrice] = useState<number>(0);
 
   // Filters based on tab + search + category button
   const filteredCrops = crops.filter((crop) => {
@@ -271,26 +279,78 @@ export default function Marketplace({
                     <span className="text-slate-400 text-[9px] font-extrabold uppercase tracking-wider">
                       Price / kg
                     </span>
-                    <span className="font-bold text-base text-slate-800 font-mono">
-                      रू {crop.pricePerKgCurrent}
-                    </span>
+                    {editingCropId === crop.id ? (
+                      <input
+                        type="number"
+                        value={newPrice}
+                        onChange={(e) => setNewPrice(parseFloat(e.target.value))}
+                        className="w-20 bg-slate-100 border border-slate-300 rounded-md px-2 py-1 text-sm font-bold text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-[#154212]"
+                        onClick={(e) => e.stopPropagation()} // Prevent card click
+                      />
+                    ) : (
+                      <span className="font-bold text-base text-slate-800 font-mono">
+                        रू {crop.pricePerKgCurrent}
+                      </span>
+                    )}
                   </div>
 
-                  <button 
-                    onClick={(e) => handleAddToCartClick(e, crop)}
-                    className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
-                      addedAnimationId === crop.id
-                        ? 'bg-emerald-600 text-white scale-105 shadow-md shadow-emerald-200'
-                        : 'bg-[#154212] hover:bg-[#2d5a27] text-white active:scale-95'
-                    }`}
-                    title="Add to basket"
-                  >
-                    {addedAnimationId === crop.id ? (
-                      <CheckCircle2 className="w-5 h-5 animate-bounce" />
+                  {isAuthenticated && currentUser?.role === 'admin' ? (
+                    editingCropId === crop.id ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onUpdateCropPrice(crop.id, newPrice);
+                            setEditingCropId(null);
+                            setNewPrice(0);
+                          }}
+                          className="w-11 h-11 rounded-xl flex items-center justify-center bg-[#154212] hover:bg-[#2d5a27] text-white active:scale-95 transition-all"
+                          title="Save Price"
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingCropId(null);
+                            setNewPrice(0);
+                          }}
+                          className="w-11 h-11 rounded-xl flex items-center justify-center bg-slate-300 hover:bg-slate-400 text-slate-800 active:scale-95 transition-all"
+                          title="Cancel Edit"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
                     ) : (
-                      <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
-                    )}
-                  </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingCropId(crop.id);
+                          setNewPrice(crop.pricePerKgCurrent);
+                        }}
+                        className="w-11 h-11 rounded-xl flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white active:scale-95 transition-all"
+                        title="Edit Price"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                    )
+                  ) : (
+                    <button 
+                      onClick={(e) => handleAddToCartClick(e, crop)}
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                        addedAnimationId === crop.id
+                          ? 'bg-emerald-600 text-white scale-105 shadow-md shadow-emerald-200'
+                          : 'bg-[#154212] hover:bg-[#2d5a27] text-white active:scale-95'
+                      }`}
+                      title="Add to basket"
+                    >
+                      {addedAnimationId === crop.id ? (
+                        <CheckCircle2 className="w-5 h-5 animate-bounce" />
+                      ) : (
+                        <ShoppingCart className="w-4 h-4 stroke-[2.5]" />
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -304,7 +364,7 @@ export default function Marketplace({
           <div className="bg-white border border-[#154212]/10 shadow-2xl rounded-2xl p-5 mb-3 w-80 text-left border-b-4 border-b-[#984700]">
             <h4 className="font-bold text-sm text-[#154212] flex items-center gap-1.5 pb-2 border-b">
               <HelpCircle className="w-4 h-4 text-[#984700]" />
-              KrishiMarket Support Center
+              FarmMitra Support Center
             </h4>
             <div className="text-xs text-slate-600 space-y-2 mt-3 font-sans">
               <p><b>Q: How do pre-orders work?</b></p>

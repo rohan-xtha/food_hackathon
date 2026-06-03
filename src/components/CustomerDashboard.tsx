@@ -1,14 +1,17 @@
 import React from 'react';
-import { Crop } from '../types';
+import { Crop, User } from '../types';
 import Marketplace from './Marketplace';
 
 interface CustomerDashboardProps {
   isNepali: boolean;
   crops: Crop[];
   onSelectCrop: (crop: Crop) => void;
+  isAuthenticated: boolean;
+  currentUser: User | null;
+  onUpdateCropPrice: (cropId: string, newPrice: number) => void;
 }
 
-export default function CustomerDashboard({ isNepali, crops, onSelectCrop }: CustomerDashboardProps) {
+export default function CustomerDashboard({ isNepali, crops, onSelectCrop, isAuthenticated, currentUser, onUpdateCropPrice }: CustomerDashboardProps) {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold text-[#154212] mb-6">Welcome, Customer!</h2>
@@ -20,6 +23,9 @@ export default function CustomerDashboard({ isNepali, crops, onSelectCrop }: Cus
         onSelectCrop={onSelectCrop}
         onAddToCart={() => { /* CustomerDashboard doesn't handle add to cart directly */ }}
         searchQuery=""
+        isAuthenticated={isAuthenticated}
+        currentUser={currentUser}
+        onUpdateCropPrice={onUpdateCropPrice}
       />
     </div>
   );
